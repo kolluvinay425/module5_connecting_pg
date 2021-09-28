@@ -42,6 +42,46 @@ productRouter.post("/", async (req, res, next) => {
   }
 });
 
+productRouter.get("/:id", async (req, res, next) => {
+  try {
+    const query = `SELECT * FROM products WHERE product_id=${req.params.id}`;
+    const product = await pool.query(query);
+    if (product.rows.length > 0) {
+      res.send(product.rows[0]);
+    } else {
+      res
+        .status(404)
+        .send({ message: `Product with ${req.params.id} is not found` });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+productRouter.put("/:id", async (req, res, next) => {
+  try {
+    const { name, description, brand, image_url, price, category } = req.body;
+    const query = `UPDATE products SET
+    name= ${"'" + name + "'"},
+    description=  ${"'" + description + "'"},
+    brand=   ${"'" + brand + "'"},
+    image_url= ${"'" + image_url + "'"},
+    price= ${"'" + price + "'"},
+    category=   ${"'" + category + "'"}
+        WHERE product_id = ${req.params.id}
+    `;
+    const product = await pool.query(query);
+    if (product.rows.length > 0) {
+      res.send(product.rows[0]);
+    } else {
+      res
+        .status(404)
+        .send({ message: `Product with ${req.params.id} is not found` });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
 // reviews(
 //     review_id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
 
