@@ -63,21 +63,14 @@ productRouter.put("/:id", async (req, res, next) => {
     const { name, description, brand, image_url, price, category } = req.body;
     const query = `UPDATE products SET
     name= ${"'" + name + "'"},
-    description=  ${"'" + description + "'"},
-    brand=   ${"'" + brand + "'"},
+    description=${"'" + description + "'"},
+    brand=${"'" + brand + "'"},
     image_url= ${"'" + image_url + "'"},
     price= ${"'" + price + "'"},
-    category=   ${"'" + category + "'"}
-        WHERE product_id = ${req.params.id}
-    `;
+    category=${"'" + category + "'"}
+        WHERE product_id = ${req.params.id} RETURNING*`;
     const product = await pool.query(query);
-    if (product.rows.length > 0) {
-      res.send(product.rows[0]);
-    } else {
-      res
-        .status(404)
-        .send({ message: `Product with ${req.params.id} is not found` });
-    }
+    res.send(product.rows[0]);
   } catch (error) {
     console.log(error);
   }
